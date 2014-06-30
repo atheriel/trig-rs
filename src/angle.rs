@@ -1,3 +1,8 @@
+/*
+    This file is part of trig-rs, a library for doing typesafe trigonometry
+    with a variety of angle formats (radians, degrees, grad, turns, and so on).
+*/
+
 use std::fmt;
 
 /// Base floating point types
@@ -18,7 +23,14 @@ pub enum Angle<S> {
     /// An angle in [turns](http://en.wikipedia.org/wiki/Turn_(geometry)).
     Turn(S),
     /// An angle as it would appear on the face of a clock.
-    Clock {hour: S, minute: S, second: S},
+    Clock {
+        /// The hours portion.
+        hour: S,
+        /// The minutes portion.
+        minute: S,
+        /// The seconds portion.
+        second: S
+    },
 }
  
 impl<S: BaseFloat> Angle<S> {

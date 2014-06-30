@@ -1,5 +1,6 @@
 /*
-    This file is part of rs-noise, a procedural noise generation library.
+    This file is part of trig-rs, a library for doing typesafe trigonometry
+    with a variety of angle formats (radians, degrees, grad, turns, and so on).
 */
 
 #![crate_id   = "trig#0.0.1-pre"]
@@ -12,18 +13,18 @@
 #![feature(macro_rules)]
 #![feature(struct_variant)]
 
-use angle::{BaseFloat, Angle, Trigonometry};
+pub use self::angle::{BaseFloat, Angle, Trigonometry};
 
-pub mod angle;
+mod angle;
 
 /// Calculate the sine.
-#[inline] pub fn sin<S: BaseFloat>(a: Angle<S>) -> S { a.sin() }
+#[inline] pub fn sin<S: BaseFloat, T: Trigonometry<S>>(t: T) -> S { t.sin() }
 
 /// Calculate the cosine.
-#[inline] pub fn cos<S: BaseFloat>(a: Angle<S>) -> S { a.cos() }
+#[inline] pub fn cos<S: BaseFloat, T: Trigonometry<S>>(t: T) -> S { t.cos() }
 
 /// Calculate the tangent.
-#[inline] pub fn tan<S: BaseFloat>(a: Angle<S>) -> S { a.tan() }
+#[inline] pub fn tan<S: BaseFloat, T: Trigonometry<S>>(t: T) -> S { t.tan() }
 
 /// Calculate the arcsine (in radians).
 #[inline] pub fn asin<S: BaseFloat>(s: S) -> Angle<S> { Angle::radians(s.asin()) }
