@@ -1,0 +1,7 @@
+[package]
+name = "trig-rs"
+version = "0.0.1"
+authors = [ "<atheriel@gmail.com>" ]
+
+[[lib]]
+name = "trig"
