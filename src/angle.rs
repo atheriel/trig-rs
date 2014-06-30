@@ -40,6 +40,17 @@ impl<S: BaseFloat> Angle<S> {
     /// Returns an angle in degrees.
     pub fn degrees(s: S) -> Angle<S> { Deg(s) }
 
+    /// Returns an angle in gradians.
+    pub fn gradians(s: S) -> Angle<S> { Grad(s) }
+
+    /// Returns an angle in turns.
+    pub fn turns(s: S) -> Angle<S> { Turn(s) }
+
+    /// Returns an angle as it would appear on a clock.
+    pub fn clock_face(hour: S, minute: S, second: S) -> Angle<S> {
+        Clock { hour: hour, minute: minute, second: second }
+    }
+
     /// Converts an angle to radians.
     pub fn to_radians(&self) -> Angle<S> {
         match self {
@@ -57,6 +68,18 @@ impl<S: BaseFloat> Angle<S> {
             _ => fail!("Not yet implemented.")
         }
     }
+
+    /// One half of the domain. In radians, this is `π`.
+    pub fn half() -> Angle<S> { Rad(Float::pi()) }
+
+    /// One quarter of the domain. In radians, this is `π/2`.
+    pub fn quarter() -> Angle<S> { Rad(Float::frac_pi_2()) }
+
+    /// One sixth of the domain. In radians, this is `π/3`.
+    pub fn sixth() -> Angle<S> { Rad(Float::frac_pi_3()) }
+
+    /// One eighth of the domain. In radians, this is `π/4`.
+    pub fn eighth() -> Angle<S> { Rad(Float::frac_pi_4()) }
 }
 
 /// Represents an object for which trigonometric methods are sensible and return
