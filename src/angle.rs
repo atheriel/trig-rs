@@ -6,10 +6,39 @@
 use std::fmt;
 
 /// Base floating point types
-pub trait BaseFloat: Primitive + fmt::Show + fmt::Float + Float + FloatMath {}
+pub trait BaseFloat: Primitive + fmt::Show + fmt::Float + Float + FloatMath {
+    fn gradians_to_radians(self) -> Self;
+    fn gradians_to_degrees(self) -> Self;
+    fn gradians_to_turns(self) -> Self;
+}
 
-impl BaseFloat for f32 {}
-impl BaseFloat for f64 {}
+impl BaseFloat for f32 {
+    fn gradians_to_radians(self) -> f32 {
+        self * Float::pi() / 200.0f32
+    }
+
+    fn gradians_to_degrees(self) -> f32 {
+        self * 360.0f32 / 400.0f32
+    }
+
+    fn gradians_to_turns(self) -> f32 {
+        self / 400.0f32
+    }
+}
+
+impl BaseFloat for f64 {
+    fn gradians_to_radians(self) -> f64 {
+        self * Float::pi() / 200.0f64
+    }
+
+    fn gradians_to_degrees(self) -> f64 {
+        self * 360.0f64 / 400.0f64
+    }
+
+    fn gradians_to_turns(self) -> f64 {
+        self / 400.0f64
+    }
+}
 
 /// Encompasses representations of angles in the Euclidean plane.
 #[deriving(Clone, PartialEq, PartialOrd, Hash)]
@@ -56,6 +85,7 @@ impl<S: BaseFloat> Angle<S> {
         match self {
             &Rad(val) => Angle::radians(val),
             &Deg(val) => Angle::radians(val.to_radians()),
+            &Grad(val) => Angle::radians(val.gradians_to_radians()),
             _ => fail!("Not yet implemented.")
         }
     }
