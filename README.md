@@ -1,0 +1,3 @@
+# trig-rs
+
+This is small project to fool around with Rust's super-powered enums. My aim is to allow working with different measures of angles in the Euclidean plane with full type safety and automatic conversion. Of course, it would be no fun to do this for degrees and radians alone --- and so I'm also working on incorporating the more estoric [gradians](https://en.wikipedia.org/wiki/Gradian), [turns](https://en.wikipedia.org/wiki/Turn_(geometry)), and clock face systems as well.
