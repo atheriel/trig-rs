@@ -3,7 +3,45 @@
     with a variety of angle formats (radians, degrees, grad, turns, and so on).
 */
 
-#![crate_name   = "trig"]
+//! # `trig-rs`: Typesafe Trigonometric Primitives
+//!
+//! Leverage Rust's super-powered enums to create a typesafe system for
+//! trigonometry in degrees, radians, and more.
+//!
+//! ## Examples
+//!
+//! ```rust
+//! use trig::{Angle, sin, cos};
+//!
+//! // Angle can be constructed in both common formats:
+//! let angle1: Angle<f64> = Angle::degrees(180.0);
+//! let angle2: Angle<f64> = Angle::radians(Float::pi());
+//!
+//! // As well as some more estoric ones:
+//! let angle3: Angle<f64> = Angle::gradians(200.0);
+//! let angle4: Angle<f64> = Angle::turns(0.5);
+//!
+//! // And convert between them seemlessly:
+//! match angle4.to_radians() {
+//!     Rad(val) => println!("0.5 turns is {}!", Rad(val)),
+//!     _ => fail!("But I wanted radians!")
+//! }
+//!
+//! // We can use the top-level trigonometric functions on any of them:
+//! assert_eq!(sin(angle1), sin(angle2));
+//! assert_eq!(cos(angle3), cos(angle4));
+//!
+//! // We can also concatenate angles using Rust's + and - syntax, which will
+//! // automatically handle conversion between different angle formats:
+//! let angle5 = angle1 + angle2 - angle3;
+//! assert_eq!(angle1, angle5);
+//!
+//! // Note that angles are guaranteed to fall in the domains you'd expect
+//! // them to:
+//! assert_eq!(angle1, angle1 + angle1 + angle1)
+//! ```
+
+#![crate_name = "trig"]
 #![comment = "Provides trigonometric primitives."]
 #![crate_type = "dylib"]
 #![crate_type = "rlib"]
@@ -222,8 +260,7 @@ macro_rules! angle_trigonometry (
             $(fn $method(&self) -> S {
                 match self {
                     &Rad(val) => val.$method(),
-                    &Deg(val) => val.to_radians().$method(),
-                    _ => fail!("Not yet implemented.")
+                    &other => other.to_radians().$method()
                 }
             }
             )+
