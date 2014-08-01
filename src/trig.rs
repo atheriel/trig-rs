@@ -124,8 +124,8 @@ impl<S: BaseFloat + Mul<S, S> + Div<S, S> + Rem<S, S>> Angle<S> {
         match self {
             &Rad(val) => Angle::degrees(val.to_degrees()),
             &Deg(val) => Angle::degrees(val),
-            &Grad(val) => Angle::radians(val * FromPrimitive::from_f64(400.0 / 360.0).unwrap()),
-            &Turn(val) => Angle::radians(val * FromPrimitive::from_f64(360.0).unwrap()),
+            &Grad(val) => Angle::degrees(val * FromPrimitive::from_f64(360.0 / 400.0).unwrap()),
+            &Turn(val) => Angle::degrees(val * FromPrimitive::from_f64(360.0).unwrap()),
             _ => unimplemented!()
         }
     }
@@ -226,10 +226,11 @@ mod test {
 
     #[test]
     fn test_conversion() {
-        assert_eq!(Angle::degrees(-5.0f64).to_radians().to_degrees(), Angle::degrees(-5.0f64));
-        assert_eq!(Angle::radians(-5.0f64).to_degrees().to_radians(), Angle::radians(-5.0f64));
         let half: Angle<f64> = Angle::half();
         assert_eq!(half.to_degrees().to_gradians().to_turns().to_radians(), half);
+        assert_eq!(half.to_turns().to_gradians().to_degrees().to_radians(), half);
+        assert_eq!(half.to_degrees().to_turns().to_gradians().to_radians(), half);
+        assert_eq!(half.to_gradians().to_radians(), half);
     }
 
     #[test]
