@@ -6,39 +6,10 @@
 use std::fmt;
 
 /// Base floating point types
-pub trait BaseFloat: Primitive + fmt::Show + fmt::Float + Float + FloatMath {
-    fn gradians_to_radians(self) -> Self;
-    fn gradians_to_degrees(self) -> Self;
-    fn gradians_to_turns(self) -> Self;
-}
+pub trait BaseFloat: Primitive + FromPrimitive + fmt::Show + fmt::Float + Float + FloatMath {}
 
-impl BaseFloat for f32 {
-    fn gradians_to_radians(self) -> f32 {
-        self * Float::pi() / 200.0f32
-    }
-
-    fn gradians_to_degrees(self) -> f32 {
-        self * 360.0f32 / 400.0f32
-    }
-
-    fn gradians_to_turns(self) -> f32 {
-        self / 400.0f32
-    }
-}
-
-impl BaseFloat for f64 {
-    fn gradians_to_radians(self) -> f64 {
-        self * Float::pi() / 200.0f64
-    }
-
-    fn gradians_to_degrees(self) -> f64 {
-        self * 360.0f64 / 400.0f64
-    }
-
-    fn gradians_to_turns(self) -> f64 {
-        self / 400.0f64
-    }
-}
+impl BaseFloat for f32 {}
+impl BaseFloat for f64 {}
 
 /// Encompasses representations of angles in the Euclidean plane.
 #[deriving(Clone, PartialEq, PartialOrd, Hash)]
@@ -54,26 +25,26 @@ pub enum Angle<S> {
     /// An angle as it would appear on the face of a clock.
     Clock {
         /// The hours portion.
-        hour: S,
+        pub hour: S,
         /// The minutes portion.
-        minute: S,
+        pub minute: S,
         /// The seconds portion.
-        second: S
+        pub second: S
     },
 }
  
-impl<S: BaseFloat> Angle<S> {
+impl<S: BaseFloat + Mul<S, S> + Div<S, S> + Rem<S, S>> Angle<S> {
     /// Returns an angle in radians.
-    pub fn radians(s: S) -> Angle<S> { Rad(s) }
+    pub fn radians(s: S) -> Angle<S> { Rad(s % Float::two_pi()) }
     
     /// Returns an angle in degrees.
-    pub fn degrees(s: S) -> Angle<S> { Deg(s) }
+    pub fn degrees(s: S) -> Angle<S> { Deg(s % FromPrimitive::from_f64(360.0).unwrap()) }
 
     /// Returns an angle in gradians.
-    pub fn gradians(s: S) -> Angle<S> { Grad(s) }
+    pub fn gradians(s: S) -> Angle<S> { Grad(s % FromPrimitive::from_f64(400.0).unwrap()) }
 
     /// Returns an angle in turns.
-    pub fn turns(s: S) -> Angle<S> { Turn(s) }
+    pub fn turns(s: S) -> Angle<S> { Turn(s.fract()) }
 
     /// Returns an angle as it would appear on a clock.
     pub fn clock_face(hour: S, minute: S, second: S) -> Angle<S> {
@@ -85,8 +56,9 @@ impl<S: BaseFloat> Angle<S> {
         match self {
             &Rad(val) => Angle::radians(val),
             &Deg(val) => Angle::radians(val.to_radians()),
-            &Grad(val) => Angle::radians(val.gradians_to_radians()),
-            _ => fail!("Not yet implemented.")
+            &Grad(val) => Angle::radians(val * Float::pi() / FromPrimitive::from_f64(200.0).unwrap()),
+            &Turn(val) => Angle::radians(val * Float::two_pi()),
+            _ => unimplemented!()
         }
     }
 
@@ -95,7 +67,31 @@ impl<S: BaseFloat> Angle<S> {
         match self {
             &Rad(val) => Angle::degrees(val.to_degrees()),
             &Deg(val) => Angle::degrees(val),
-            _ => fail!("Not yet implemented.")
+            &Grad(val) => Angle::radians(val * FromPrimitive::from_f64(400.0 / 360.0).unwrap()),
+            &Turn(val) => Angle::radians(val * FromPrimitive::from_f64(360.0).unwrap()),
+            _ => unimplemented!()
+        }
+    }
+
+    /// Converts an angle to gradians.
+    pub fn to_gradians(&self) -> Angle<S> {
+        match self {
+            &Rad(val) => Angle::gradians(val / Float::pi() * FromPrimitive::from_f64(200.0).unwrap()),
+            &Deg(val) => Angle::gradians(val * FromPrimitive::from_f64(400.0 / 360.0).unwrap()),
+            &Grad(val) => Angle::gradians(val),
+            &Turn(val) => Angle::gradians(val * FromPrimitive::from_f64(400.0).unwrap()),
+            _ => unimplemented!()
+        }
+    }
+
+    /// Converts an angle to turns.
+    pub fn to_turns(&self) -> Angle<S> {
+        match self {
+            &Rad(val) => Angle::turns(val / Float::two_pi()),
+            &Deg(val) => Angle::turns(val / FromPrimitive::from_f64(360.0).unwrap()),
+            &Grad(val) => Angle::turns(val / FromPrimitive::from_f64(400.0).unwrap()),
+            &Turn(val) => Angle::turns(val),
+            _ => unimplemented!()
         }
     }
 
