@@ -1,0 +1,9 @@
+install:
+  - wget http://www.rust-lang.org/rustup.sh
+  - sudo sh ./rustup.sh
+  - export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+  - rustc -v
+script:
+  - make
+  - make test
+  - make doctest

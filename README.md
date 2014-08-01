@@ -33,8 +33,7 @@ assert_eq!(cos(angle3), cos(angle4));
 
 // We can also concatenate angles using Rust's + and - syntax, which will
 // automatically handle conversion between different angle formats:
-let angle5 = angle1 + angle2 - angle3;
-assert_eq!(angle1, angle5);
+assert_eq!(angle1 + angle2, angle1 + angle3);
 
 // Note that angles are guaranteed to fall in the domains you'd expect
 // them to:
