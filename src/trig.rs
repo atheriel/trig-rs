@@ -163,6 +163,57 @@ impl<S: BaseFloat + Mul<S, S> + Div<S, S> + Rem<S, S>> Angle<S> {
 
     /// One eighth of the domain. In radians, this is `π/4`.
     pub fn eighth() -> Angle<S> { Rad(Float::frac_pi_4()) }
+
+    /// Gets the raw value that is stored in the angle.
+    ///
+    /// ## Failure
+    ///
+    /// Clock-valued angles are not encoded as a single value, and so this
+    /// method will always fail for them.
+    pub fn unwrap(&self) -> S {
+        match self {
+            &Rad(s)|&Deg(s)|&Grad(s)|&Turn(s) => s,
+            _ => fail!("Clock values cannot be unwrapped.")
+        }
+    }
+}
+
+impl<S: BaseFloat> Add<Angle<S>, Angle<S>> for Angle<S> {
+    #[inline]
+    fn add(&self, other: &Angle<S>) -> Angle<S> {
+        match (self, other) {
+            (&Rad(val), othr) => Angle::radians(val + othr.to_radians().unwrap()),
+            (&Deg(val), othr) => Angle::degrees(val + othr.to_degrees().unwrap()),
+            (&Grad(val), othr) => Angle::gradians(val + othr.to_gradians().unwrap()),
+            (&Turn(val), othr) => Angle::turns(val + othr.to_turns().unwrap()),
+            _ => unimplemented!()
+        }
+    }
+}
+
+impl<S: BaseFloat> Sub<Angle<S>, Angle<S>> for Angle<S> {
+    #[inline]
+    fn sub(&self, other: &Angle<S>) -> Angle<S> {
+        match (self, other) {
+            (&Rad(val), othr) => Angle::radians(val - othr.to_radians().unwrap()),
+            (&Deg(val), othr) => Angle::degrees(val - othr.to_degrees().unwrap()),
+            (&Grad(val), othr) => Angle::gradians(val - othr.to_gradians().unwrap()),
+            (&Turn(val), othr) => Angle::turns(val - othr.to_turns().unwrap()),
+            _ => unimplemented!()
+        }
+    }
+}
+
+impl<S: BaseFloat + fmt::Show> fmt::Show for Angle<S> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &Deg(val) => write!(f, "{}°", val),
+            &Rad(val) => write!(f, "{} rad", val),
+            &Grad(val) => write!(f, "{} gon", val),
+            &Turn(val) => write!(f, "{} turns", val),
+            _ => fail!("Not yet implemented.")
+        }
+    }
 }
 
 macro_rules! angle_trigonometry (
@@ -181,40 +232,6 @@ macro_rules! angle_trigonometry (
 )
 
 angle_trigonometry!(sin, cos, tan)
-
-macro_rules! angle_ops (
-    ($Trait:ident, $method:ident) => (
-        impl<S: BaseFloat> $Trait<Angle<S>, Angle<S>> for Angle<S> {
-            #[inline]
-            fn $method(&self, other: &Angle<S>) -> Angle<S> {
-                match (self, other) {
-                    (&Deg(s1), &Deg(s2)) => Angle::degrees(s1.$method(&s2)),
-                    (&Deg(s1), &Rad(s2)) => Angle::degrees(s1.$method(&s2.to_degrees())),
-                    (&Rad(s1), &Rad(s2)) => Angle::radians(s1.$method(&s2)),
-                    (&Rad(s1), &Deg(s2)) => Angle::radians(s1.$method(&s2.to_radians())),
-                    _ => fail!("Not yet implemented.")
-                }
-            }
-        }
-    )
-)
-
-angle_ops!(Add, add)
-angle_ops!(Sub, sub)
-angle_ops!(Mul, mul)
-angle_ops!(Div, div)
-
-impl<S: BaseFloat + fmt::Show> fmt::Show for Angle<S> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            &Deg(val) => write!(f, "{}°", val),
-            &Rad(val) => write!(f, "{} rad", val),
-            &Grad(val) => write!(f, "{} gon", val),
-            &Turn(val) => write!(f, "{} turns", val),
-            _ => fail!("Not yet implemented.")
-        }
-    }
-}
 
 /*
     Test suite.
@@ -239,6 +256,5 @@ mod test {
         assert_eq!(Angle::degrees(100.0f64) - Angle::degrees(100.0f64), Angle::degrees(0.0f64));
         assert_eq!(Angle::degrees(100.0f64) + Angle::radians(0.0f64), Angle::degrees(100.0f64));
         assert_eq!(Angle::radians(1.0f64) - Angle::degrees(0.0f64), Angle::radians(1.0f64));
-        assert_eq!(Angle::degrees(2.0f64) * Angle::degrees(100.0f64), Angle::degrees(200.0f64));
     }
 }
