@@ -8,6 +8,10 @@ the more estoric [gradians](https://en.wikipedia.org/wiki/Gradian),
 [turns](https://en.wikipedia.org/wiki/Turn_(geometry)), and clock face systems
 as well.
 
+The code is hosted on [GitHub](https://github.com/atheriel/trig-rs), and a copy
+of the documentation should be available at
+[Rust-CI](http://www.rust-ci.org/atheriel/trig-rs/doc/trig/).
+
 ## Examples
 
 ```rust
@@ -39,3 +43,12 @@ assert_eq!(angle1 + angle2, angle1 + angle3);
 // them to:
 assert_eq!(angle1, angle1 + angle1 + angle1)
 ```
+
+## Building
+
+The project can be built with cargo. A makefile is provided to do this for you,
+and also to create the documentation and run the examples in the documentation.
+
+## License
+
+The project is licensed under the MIT license. See `LICENSE.txt` for details.

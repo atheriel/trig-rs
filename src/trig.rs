@@ -8,6 +8,10 @@
 //! Leverage Rust's super-powered enums to create a typesafe system for
 //! trigonometry in degrees, radians, and more.
 //!
+//! The code is hosted on [GitHub](https://github.com/atheriel/trig-rs), and a
+//! copy of the documentation should be available at
+//! [Rust-CI](http://www.rust-ci.org/atheriel/trig-rs/doc/trig/).
+//!
 //! ## Examples
 //!
 //! ```rust

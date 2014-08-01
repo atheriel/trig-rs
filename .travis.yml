@@ -1,3 +1,6 @@
+env:
+  global:
+    - secure: fTLqnUG3vxsnZunscvRdV8aJ2+Byd5qEtfRXXGKmWgZYlPWQbWPpReIfbuPpUniLwWSNs9k8Casm1uKIsH5th5zWax7vvFCTQqRTUqrWvc6MPHjq02PjfgedtqfaZUFA4ms+bS0NNfUIgK9DkcIZb3vxgtPTI6sLStvHnIqrK5I=
 install:
   - wget http://www.rust-lang.org/rustup.sh
   - sudo sh ./rustup.sh
@@ -7,3 +10,5 @@ script:
   - make
   - make test
   - make doctest
+after_script:
+  - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
